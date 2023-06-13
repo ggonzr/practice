@@ -1,0 +1,20 @@
+[package]
+name = "rusty-journal"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+structopt = "0.3.26"
+serde_json = "1.0.96"
+
+# Note that, if we require to append extra fields for a package
+# in TOML. This requires to append the package into a separate block
+[dependencies.chrono]
+features = ["serde"] # Include seralization features for this package into compilation time
+version = "0.4.26" 
+
+[dependencies.serde]
+features = ["derive"] 
+version = "1.0.164"

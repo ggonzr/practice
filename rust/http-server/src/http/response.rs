@@ -1,13 +1,9 @@
 use chunked_transfer::Encoder;
-use std::{
-    fs,
-    io::{prelude::*, BufReader},
-    net::TcpStream,
-};
+use std::{fs, io::prelude::*, net::TcpStream};
 
 /// This module handles the response
 /// for a HTTP requestc
-fn send_success_response(mut stream: TcpStream) {
+pub fn send_success_response(mut stream: TcpStream) {
     // Send an HTTP 200 response
     // Remember: \r\n means CRLF (carriage return, line feed),
     // If you append two of them, it means the HTTP response has finished
@@ -22,7 +18,7 @@ fn send_success_response(mut stream: TcpStream) {
     stream.write_all(content.as_bytes()).unwrap();
 }
 
-fn send_error_response(mut stream: TcpStream, file: &str) {
+pub fn send_error_response(mut stream: TcpStream, file: &str) {
     let file = fs::read(file).unwrap();
     let file_size = file.len();
 
@@ -44,23 +40,4 @@ fn send_error_response(mut stream: TcpStream, file: &str) {
     let mut content = content.join("\r\n").to_string().into_bytes();
     content.extend(&encoded);
     stream.write_all(&content).unwrap();
-}
-
-pub fn handle_connection(mut stream: TcpStream) {
-    // Read the request body as text following the HTTP protocol
-    let buf_reader = BufReader::new(&mut stream);
-    // Parse request headers
-    let http_request: Vec<_> = buf_reader
-        .lines()
-        .map(|l| l.unwrap())
-        .take_while(|l| !l.is_empty())
-        .collect();
-
-    // println!("Request: {:?}", http_request);
-    let resource: &str = &http_request[0];
-    let root_resource = "GET / HTTP/1.1";
-    match resource {
-        _ if resource == root_resource => send_success_response(stream),
-        _ => send_error_response(stream, "public/disappointed.jpg"),
-    }
 }

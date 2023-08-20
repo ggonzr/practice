@@ -39,7 +39,7 @@ impl HTTPServer for SimpleHTTPServer {
     }
 
     fn run(&self) {
-        for connection in self.server().incoming() {
+        for connection in self.server().incoming().take(2) {
             self.pool.execute(move || {
                 handle_connection(connection.unwrap());
             })

@@ -21,11 +21,17 @@ class File(Base):
         if isinstance(self.path, str):
             self.path: pathlib.Path = pathlib.Path(self.path)
 
-    def load(self):
+    def load(self) -> bytes:
         """
         Loads the file's content.
         """
-        Loader.load(file=self)
+        if not self.content:
+            Loader.load(file=self)
+
+        content: bytes = b""
+        if self.content:
+            content = self.content
+        return content
 
 
 class LoaderInterface(abc.ABC):

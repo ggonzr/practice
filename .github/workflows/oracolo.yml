@@ -1,0 +1,39 @@
+name: Oracolo
+on:
+  push:
+    paths:
+      - "python/ml/land-tagger"
+jobs:
+  quality:
+    name: Check code's quality
+    runs-on: ubuntu-latest
+
+    # Set the working directory
+    defaults:
+      run:
+        working-directory: 'python/ml/land-tagger/'
+
+    # Job steps
+    steps:
+      - name: Retrieve source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.x'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Pylint score
+        run: |
+          python3 -m pylint --version
+          pylint `find . -type d \( -path ./venv -o -path ./draft \) -prune -o -type f | grep .py$ | xargs`
+
+      - name: Run tests
+        run: |
+          export PYTHONPATH=$(pwd)
+          python3 tests/test.py

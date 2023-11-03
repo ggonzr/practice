@@ -19,7 +19,11 @@ class ImageTest(unittest.TestCase):
         Prepare the test
         """
         self.valid_file = self.__valid_image_file()
+        self.raster_file = self.__raster_file()
         self.tmp_file, self.empty_file = self.__create_invalid_file(".jpg")
+
+    def tearDown(self) -> None:
+        self.tmp_file.close()
 
     def __create_invalid_file(self, extension: str):
         """
@@ -32,9 +36,6 @@ class ImageTest(unittest.TestCase):
         file: File = File(path=Path(tempfile.gettempdir()).joinpath(tmp_file.name))
         return tmp_file, file
 
-    def tearDown(self) -> None:
-        self.tmp_file.close()
-
     def __valid_image_file(self) -> File:
         """
         Returns a file object linked
@@ -43,13 +44,21 @@ class ImageTest(unittest.TestCase):
         image_path: Path = Path("./tests/image/static/cat.jpg").absolute()
         return File(path=image_path)
 
+    def __raster_file(self) -> File:
+        """
+        Returns a file object linked
+        to the example raster file.
+        """
+        image_path: Path = Path("./tests/image/static/sample.tif").absolute()
+        return File(path=image_path)
+
     def test_load_image(self) -> None:
         """
         Test that it is possible to load an image
         from a valid file.
         """
         image: Image = Image.make(file=self.valid_file)
-        expected_resolution = (5184, 3456)
+        expected_resolution = (3456, 5184)
         self.assertEqual(3, image.bands, "Image bands/channels are not the expected.")
         self.assertEqual(
             expected_resolution,
@@ -67,3 +76,35 @@ class ImageTest(unittest.TestCase):
             Image.make(file)
 
         self.assertRaises(RuntimeError, __execute_error, self.empty_file)
+
+    def test_load_raster(self) -> None:
+        """
+        Test the behavior when a GeoTIFF image file
+        is loaded.
+        """
+        image: Image = Image.make(file=self.raster_file)
+        expected_resolution = (1001, 1001)
+        expected_crs: str = "EPSG:32631"
+
+        self.assertIsNotNone(image.metadata, "The raster metadata should be available")
+        self.assertNotEqual(
+            {},
+            image.metadata,
+            msg="The raster metadata should be available"
+        )
+        self.assertEqual(
+            image.resolution,
+            expected_resolution,
+            "The image resolution is not the expected"
+        )
+
+        image_crs: str = (
+            ""
+            if not image.metadata
+            else str(image.metadata.get("crs", ""))
+        )
+        self.assertEqual(
+            image_crs,
+            expected_crs,
+            "The coordinate reference system is not the expected"
+        )

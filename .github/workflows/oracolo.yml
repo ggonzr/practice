@@ -1,5 +1,6 @@
 name: Oracolo
 on:
+  workflow_dispatch:
   push:
     paths:
       - "python/ml/land-tagger"

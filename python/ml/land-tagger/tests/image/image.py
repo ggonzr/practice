@@ -30,6 +30,7 @@ class ImageTest(unittest.TestCase):
         Creates an invalid temporal file to test
         behavior in case of errors.
         """
+        # pylint: disable=consider-using-with
         tmp_file = tempfile.NamedTemporaryFile(
             mode="w+", encoding="utf-8", suffix=extension
         )

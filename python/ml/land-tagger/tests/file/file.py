@@ -19,6 +19,7 @@ class FileTest(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
         # Temporal file
+        # pylint: disable=consider-using-with
         self.tmp_file = tempfile.NamedTemporaryFile(mode="w+", encoding="utf-8")
         self.tmp_file.write(FileTest.CONTENT)
         self.tmp_file.seek(0)

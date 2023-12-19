@@ -5,6 +5,7 @@ properly.
 import uuid
 import tempfile
 import unittest
+from pathlib import Path
 from src.file.file import File
 
 
@@ -33,7 +34,8 @@ class FileTest(unittest.TestCase):
         Check that it is possible to load
         a file's content as bytes.
         """
-        loaded_file: File = File(path=self.tmp_file.name)
+        fp = Path(self.tmp_file.name)
+        loaded_file: File = File(path=fp)
         loaded_file.load()
         parsed_content: str = ""
         if loaded_file.content:
@@ -49,8 +51,9 @@ class FileTest(unittest.TestCase):
         a file that doesn't exist.
         """
 
-        def __execute_error():
-            invalid_file: File = File(path=FileTest.INVALID_FILE)
+        def __execute_error() -> None:
+            fp = Path(FileTest.INVALID_FILE)
+            invalid_file: File = File(path=fp)
             invalid_file.load()
 
         self.assertRaises(FileNotFoundError, __execute_error)

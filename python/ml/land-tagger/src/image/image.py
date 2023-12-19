@@ -107,7 +107,7 @@ class PillowLoader(ImageInterface):
     def __init__(self) -> None:
         self.available_extensions = self.__compute_extensions()
 
-    def __compute_extensions(self):
+    def __compute_extensions(self) -> set[str]:
         exts = PIL.Image.registered_extensions()
         supported_extensions: set[str] = {
             ex for ex, f in exts.items() if f in PIL.Image.OPEN
@@ -154,7 +154,7 @@ class RasterIOLoader(ImageInterface):
     def __init__(self) -> None:
         self.available_extensions = self.__compute_extensions()
 
-    def __compute_extensions(self):
+    def __compute_extensions(self) -> set[str]:
         # Only use this loader for GeoTIFF images.
         desired_exts: set[str] = {"tif", "tiff"}
         all_exts: set[str] = (

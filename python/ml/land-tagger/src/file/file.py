@@ -14,12 +14,11 @@ class File(Base):
     locations including local filesystems, NFS, cloud filesystems.
     """
 
-    path: str | pathlib.Path
+    path: pathlib.Path
     content: bytes | None = None
 
     def __check_values__(self):
-        if isinstance(self.path, str):
-            self.path: pathlib.Path = pathlib.Path(self.path)
+        pass
 
     def load(self) -> bytes:
         """

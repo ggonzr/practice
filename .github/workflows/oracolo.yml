@@ -29,12 +29,21 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
+      - name: Set up Python path
+        run: |
+          export PYTHONPATH=$(pwd)
+          echo "Python Path: $PYTHONPATH"
+
       - name: Pylint score
         run: |
           python3 -m pylint --version
           pylint `find . -type d \( -path ./venv -o -path ./draft \) -prune -o -type f | grep .py$ | xargs`
 
+      - name: Mypy static analysis
+        run: |
+          python3 -m mypy --version
+          mypy `find . -type d \( -path ./venv -o -path ./draft \) -prune -o -type f | grep .py$ | xargs`
+
       - name: Run tests
         run: |
-          export PYTHONPATH=$(pwd)
           python3 tests/test.py

@@ -26,7 +26,7 @@ class Base(abc.ABC):
 
         return super().__new__(cls)
 
-    def __validate__(self):
+    def __validate__(self) -> None:
         # pylint: disable=no-member
         model_annotations: dict = self.__annotations__
         type_errors: list[str] = []

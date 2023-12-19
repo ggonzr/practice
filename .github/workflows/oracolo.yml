@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - "python/ml/land-tagger"
+  pull_request:
+    paths:
+      - "python/ml/land-tagger"
+
 jobs:
   quality:
     name: Check code's quality

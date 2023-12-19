@@ -2,8 +2,14 @@ name: Oracolo
 on:
   workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
       - "python/ml/land-tagger"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "python/ml/land-tagger"
+
 jobs:
   quality:
     name: Check code's quality
@@ -33,6 +39,11 @@ jobs:
         run: |
           python3 -m pylint --version
           pylint `find . -type d \( -path ./venv -o -path ./draft \) -prune -o -type f | grep .py$ | xargs`
+
+      - name: Mypy static analysis
+        run: |
+          python3 -m mypy --version
+          mypy `find . -type d \( -path ./venv -o -path ./draft \) -prune -o -type f | grep .py$ | xargs`
 
       - name: Run tests
         run: |

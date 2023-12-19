@@ -34,7 +34,7 @@ class BaseSchemaTest(unittest.TestCase):
     component.
     """
 
-    def test_wrong_types(self):
+    def test_wrong_types(self) -> None:
         """
         Check that an exception is raised
         when values of wrong types are provided
@@ -43,7 +43,7 @@ class BaseSchemaTest(unittest.TestCase):
         error_raised: bool = False
         try:
             _: ExampleSchema = ExampleSchema(
-                word=1, height_cm="Hello world!", height_m=1.90
+                word=1, height_cm="Hello world!", height_m=1.90 # type: ignore
             )
         except TypeError:
             error_raised = True
@@ -53,7 +53,7 @@ class BaseSchemaTest(unittest.TestCase):
             "A TypeError should be raised due to incorrect types assigned",
         )
 
-    def test_invalid_rules(self):
+    def test_invalid_rules(self) -> None:
         """
         Check that a ValueError is raised
         if one of the assigned values

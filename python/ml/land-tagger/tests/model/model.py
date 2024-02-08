@@ -78,6 +78,19 @@ class ModelTest(unittest.TestCase):
             self.test_expected_values, pred_samples, msg="The prediction doesn't match"
         )
 
+    def test_input_dtype_tensorflow_model(self) -> None:
+        """
+        Retrieve the input shape and the dtype
+        and check it is the expected
+        """
+        linear_model = Model.make(source=self.tf_example_file)
+        self.assertEqual(
+            linear_model.model.input_dtype, "float32", msg="The dtype doesn't match"
+        )
+        self.assertEqual(
+            linear_model.model.input_shape, (1,), msg="The input shape doesn't match"
+        )
+
     def test_load_onnx_model(self) -> None:
         """
         Loads a simple linear tensorflow model
@@ -113,11 +126,24 @@ class ModelTest(unittest.TestCase):
         )
 
         # Cast the sample
-        prediction = numpy.expand_dims(
-            numpy.array(self.test_values, dtype=numpy.float32), axis=1
+        prediction = [numpy.array([[t]], dtype=numpy.float32) for t in self.test_values]
+        result = numpy.round(
+            numpy.array([linear_model.model.predict(p) for p in prediction])
         )
-        result = linear_model.model.predict(prediction)
         pred_samples: list[int] = list(result.flatten().astype(int))
         self.assertEqual(
             self.test_expected_values, pred_samples, msg="The prediction doesn't match"
+        )
+
+    def test_input_dtype_onnx_model(self) -> None:
+        """
+        Retrieve the input shape and the dtype
+        and check it is the expected
+        """
+        linear_model: Model = Model.make(source=self.onnx_example_file)
+        self.assertEqual(
+            linear_model.model.input_dtype, "float32", msg="The dtype doesn't match"
+        )
+        self.assertEqual(
+            linear_model.model.input_shape, (1, 1), msg="The input shape doesn't match"
         )

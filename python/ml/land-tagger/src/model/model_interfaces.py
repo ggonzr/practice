@@ -2,6 +2,7 @@
 This module provides all the interfaces
 related with the model schema.
 """
+
 import abc
 import numpy
 from src.file.file import File
@@ -24,6 +25,33 @@ class ModelInterface(abc.ABC):
 
         Returns:
             numpy.ndarray: Result prediction.
+        """
+
+    @property
+    @abc.abstractmethod
+    def input_shape(self) -> tuple[int, ...]:
+        """
+        Returns the dimensions of the input layer
+
+        Returns:
+            tuple[int, ...]: A tuple of int describing
+                the size of each dimension.
+        Raises:
+            ValueError: If the model has more than one
+                input layer.
+        """
+
+    @property
+    @abc.abstractmethod
+    def input_dtype(self) -> str:
+        """
+        Returns the expected dtype for the input layer
+
+        Returns:
+            str: Input layer dtype.
+        Raises:
+            ValueError: If the model has more than one
+                input layer.
         """
 
 

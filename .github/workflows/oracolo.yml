@@ -4,11 +4,11 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "practice/python/ml/land-tagger/**"
+      - "python/ml/land-tagger/**"
   pull_request:
     branches: ["main"]
     paths:
-      - "practice/python/ml/land-tagger/**"
+      - "python/ml/land-tagger/**"
 
 jobs:
   quality:

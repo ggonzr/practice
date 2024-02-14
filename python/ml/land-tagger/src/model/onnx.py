@@ -47,29 +47,35 @@ class ONNXModel(ModelInterface):
 
     def __init__(self, session: ort.InferenceSession) -> None:
         self.session = session
+        self.input_layer = self.__get_input_layers()
+
+    def __get_input_layers(self) -> ort.NodeArg:
+        """
+        Check that there's only one input layer for the model
+        and returns it.
+
+        Raise:
+            ValueError: In case the loaded model doesn't have
+                exactly one input layer.
+        """
+        model_inputs = self.session.get_inputs()
+        if (num_layers := len(model_inputs)) != 1:
+            raise ValueError(
+                f"Expected just one input layer, found {num_layers} instead"
+            )
+        return model_inputs[0]
 
     def predict(self, sample: numpy.ndarray) -> numpy.ndarray:
-        outputs = self.session.run(None, {"input": sample})
+        outputs = self.session.run(None, {self.input_layer.name: sample})
         return outputs[0]
 
     @property
     def input_shape(self) -> tuple[int, ...]:
-        model_inputs = self.session.get_inputs()
-        if (num_layers := len(model_inputs)) != 1:
-            raise ValueError(
-                f"Expected just one input layer, found {num_layers} instead"
-            )
-        return tuple(model_inputs[0].shape)
+        return tuple(self.input_layer.shape)
 
     @property
     def input_dtype(self) -> str:
-        model_inputs = self.session.get_inputs()
-        if (num_layers := len(model_inputs)) != 1:
-            raise ValueError(
-                f"Expected just one input layer, found {num_layers} instead"
-            )
-
-        dtype: str = model_inputs[0].type
+        dtype: str = self.input_layer.type
         potential_dtypes: list[str] = _onnx_get_dtype.findall(dtype)
         if not potential_dtypes:
             raise ValueError("Unable to extract the dtype from the ONNX layer")
